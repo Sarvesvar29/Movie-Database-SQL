@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="MovieDB.sqlite" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1275"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="Movies" custom_title="0" dock_id="1" table="4,6:mainMovies"/><dock_state state="000000ff00000000fd00000001000000020000043b000002aefc0100000001fb000000160064006f0063006b00420072006f007700730065003101000000000000043b0000011800ffffff000002580000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Actors" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="54"/><column index="2" value="140"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Movies" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="59"/><column index="2" value="109"/><column index="3" value="80"/><column index="4" value="60"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">DROP TABLE IF EXISTS Ratings;
+DROP TABLE IF EXISTS MovieActors;
+DROP TABLE IF EXISTS Actors;
+DROP TABLE IF EXISTS Movies;
+DROP TABLE IF EXISTS Genres;
+
+CREATE TABLE Genres (
+    genre_id INTEGER PRIMARY KEY,
+    genre_name TEXT
+);
+
+CREATE TABLE Movies (
+    movie_id INTEGER PRIMARY KEY,
+    title TEXT,
+    release_year INTEGER,
+    genre_id INTEGER,
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
+);
+
+CREATE TABLE Actors (
+    actor_id INTEGER PRIMARY KEY,
+    actor_name TEXT
+);
+
+CREATE TABLE MovieActors (
+    movie_id INTEGER,
+    actor_id INTEGER,
+    PRIMARY KEY (movie_id, actor_id),
+    FOREIGN KEY (movie_id) REFERENCES Movies(movie_id),
+    FOREIGN KEY (actor_id) REFERENCES Actors(actor_id)
+);
+
+CREATE TABLE Ratings (
+    rating_id INTEGER PRIMARY KEY,
+    movie_id INTEGER,
+    user_name TEXT,
+    rating INTEGER CHECK (rating BETWEEN 1 AND 10),
+    FOREIGN KEY (movie_id) REFERENCES Movies(movie_id)
+);
+INSERT INTO Genres VALUES (1, 'Action'), (2, 'Drama');
+
+INSERT INTO Movies VALUES (1, 'Inception', 2010, 1), (2, 'The Godfather', 1972, 2);
+
+INSERT INTO Actors VALUES (1, 'Leonardo DiCaprio'), (2, 'Marlon Brando');
+
+INSERT INTO MovieActors VALUES (1, 1), (2, 2);
+
+INSERT INTO Ratings VALUES (1, 1, 'Alice', 9), (2, 1, 'Bob', 8), (3, 2, 'Alice', 10);
+SELECT title, AVG(rating) as avg_rating
+FROM Movies
+JOIN Ratings ON Movies.movie_id = Ratings.movie_id
+GROUP BY title;
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
